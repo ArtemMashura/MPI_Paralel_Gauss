@@ -1,106 +1,4 @@
-﻿//#include <mpi.h>
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <math.h>
-//#include <iostream>
-//#include <locale.h>
-//using namespace std;
-//#define N 4 // Размер системы уравнений (число неизвестных)
-//
-//void print_matrix(double matrix[N][N + 1]) {
-//    for (int i = 0; i < N; i++) {
-//        for (int j = 0; j < N + 1; j++) {
-//            printf("%10.4f ", matrix[i][j]);
-//        }
-//        printf("\n");
-//    }
-//    printf("\n");
-//}
-//
-//void gauss_elimination(double matrix[N][N + 1], int rank, int size) {
-//    for (int k = 0; k < N; k++) {
-//        if (rank == 0) {
-//            // Нормализуем ведущую строку
-//            for (int j = k + 1; j < N + 1; j++) {
-//                matrix[k][j] /= matrix[k][k];
-//            }
-//            matrix[k][k] = 1.0;
-//        }
-//
-//        // Передаем ведущую строку всем процессам
-//        MPI_Bcast(matrix[k], N + 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-//
-//        // Обновляем строки, принадлежащие текущему процессу
-//        for (int i = k + 1 + rank; i < N; i += size) {
-//            double factor = matrix[i][k];
-//            for (int j = k; j < N + 1; j++) {
-//                matrix[i][j] -= factor * matrix[k][j];
-//            }
-//        }
-//
-//        // Синхронизируем процессы
-//        for (int i = 0; i < N; i++) {
-//            MPI_Bcast(matrix[i], N + 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-//        }
-//    }
-//}
-//
-//void back_substitution(double matrix[N][N + 1], double result[N], int rank, int size) {
-//    for (int i = N - 1; i >= 0; i--) {
-//        if (rank == 0) {
-//            result[i] = matrix[i][N];
-//            for (int j = i + 1; j < N; j++) {
-//                result[i] -= matrix[i][j] * result[j];
-//            }
-//        }
-//        MPI_Bcast(&result[i], 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-//    }
-//}
-//
-//int main(int argc, char** argv) {
-//    setlocale(LC_ALL, "Russian");
-//    MPI_Init(&argc, &argv);
-//    int rank, size;
-//    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-//    MPI_Comm_size(MPI_COMM_WORLD, &size);
-//
-//    double matrix[N][N + 1] = {
-//        {2, -1, 1, 3, 8},
-//        {1, 3, 2, -4, 4},
-//        {4, -1, -2, 2, 2},
-//        {3, 1, 3, -1, 6}
-//    };
-//
-//    if (rank == 0) {
-//        printf("Ishodnaya matrica:\n");
-//        print_matrix(matrix);
-//    }
-//
-//    // Прямой ход метода Гаусса
-//    gauss_elimination(matrix, rank, size);
-//
-//    if (rank == 0) {
-//        printf("Matrica posle pryamogo:\n");
-//        print_matrix(matrix);
-//    }
-//
-//    // Обратный ход для нахождения неизвестных
-//    double result[N] = { 0 };
-//    back_substitution(matrix, result, rank, size);
-//
-//    if (rank == 0) {
-//        printf("Solution:\n");
-//        for (int i = 0; i < N; i++) {
-//            printf("x%d = %f\n", i + 1, result[i]);
-//        }
-//    }
-//
-//    MPI_Finalize();
-//    return 0;
-//}
-
-
-#include <iostream>
+﻿#include <iostream>
 #include <mpi.h>
 #include <chrono>
 using std::chrono::high_resolution_clock;
@@ -144,15 +42,15 @@ int main(int argc, char** argv)
             for (int j = 0; j < size; j++)
             {
                 matrix[i][j] = rand() % 10;
-                cout << matrix[i][j] <<"x" << j+1 ;
-                if (j + 1 < size) {
+                // cout << matrix[i][j] <<"x" << j+1 ;
+                /*if (j + 1 < size) {
                     cout << " + ";
-                }
+                }*/
                 if (i == j) E[i][j] = 1.0;
                 else E[i][j] = 0.0;
             }
             B[i] = rand() % 10;
-            cout << " = " << B[i] << endl;
+            //cout << " = " << B[i] << endl;
         }
     }
 
@@ -300,10 +198,12 @@ int main(int argc, char** argv)
 
     if (rank == 0)
     {
-        for (int i = 0; i < size; i++)
-            cout << "\nx" << i + 1 << " = " << X[i];
-
         auto end = high_resolution_clock::now();
+        
+
+        /*for (int i = 0; i < size; i++)
+            cout << "\nx" << i + 1 << " = " << X[i];*/
+
         duration<double, std::milli> ms_double = end - start;
         std::cout << endl << ms_double.count() << "ms\n";
     }
